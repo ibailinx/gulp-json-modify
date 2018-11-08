@@ -1,10 +1,10 @@
 {
-  "name": "gulp-json-modify",
-  "description": "Modify data on a JSON path using Gulp (gulpjs.com)",
+  "name": "gulp-json-modify-plus",
+  "description": "Modify & Delete data on a JSON path using Gulp (gulpjs.com)",
   "version": "1.0.2",
-  "homepage": "http://github.com/olioex/gulp-json-modify",
-  "repository": "git://github.com/olioex/gulp-json-modify.git",
-  "author": "Lloyd Watkin <lloyd@olioex.com (http://olioex.com)",
+  "homepage": "https://github.com/ibailinx/gulp-json-modify",
+  "repository": "https://github.com/ibailinx/gulp-json-modify.git",
+  "author": "bailinx",
   "main": "./index.js",
   "dependencies": {
     "dot-object": "^1.2.0",

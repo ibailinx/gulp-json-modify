@@ -1,8 +1,8 @@
-# gulp-json-modify
+# gulp-json-modify-plus
 
-[![Build Status](https://travis-ci.org/OLIOEX/gulp-json-modify.png?branch=master)](https://travis-ci.org/OLIOEX/gulp-json-modify)
+[![Build Status](https://travis-ci.org/OLIOEX/gulp-json-modify.png?branch=master)](https://travis-ci.org/OLIOEX/gulp-json-modify-plus)
 
-[![NPM version](https://badge.fury.io/js/gulp-json-modify.png)](http://badge.fury.io/js/gulp-json-modify)
+[![NPM version](https://badge.fury.io/js/gulp-json-modify.png)](http://badge.fury.io/js/gulp-json-modify-plus)
 
 > Replace data in a JSON file with something else
 
@@ -11,7 +11,7 @@
 #### Install
 
 ```bash
-$ npm install gulp-json-modify --save
+$ npm install gulp-json-modify-plus --save
 ```
 
 ## Example
@@ -38,7 +38,7 @@ gulp.task('default', function(){
 ## Options
 
 * **key**: key to replace (required)
-* **value**: set to value (required)
+* **value**: set to value (if value === undefined The plugin will delete `obj.key`)
 
 Example:
 

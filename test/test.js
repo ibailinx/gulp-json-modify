@@ -5,7 +5,7 @@ var File = require('vinyl')
   , jsonModify = require('..')
 require('mocha')
 
-describe('JSON Modify', function() {
+describe('JSON Modify', function () {
 
   var dotObject = {
     key1: 'value1',
@@ -16,7 +16,7 @@ describe('JSON Modify', function() {
 
   var fakeFile = null
 
-  beforeEach(function() {
+  beforeEach(function () {
     fakeFile = new File({
       base: 'test/',
       cwd: 'test/',
@@ -25,12 +25,12 @@ describe('JSON Modify', function() {
     })
   })
 
-  describe('Replacements', function() {
+  describe('Replacements', function () {
 
-    it('should replace simple key', function(done) {
+    it('should replace simple key', function (done) {
       var output = jsonModify({ key: 'key1', value: 'newValue' })
 
-      output.once('data', function(newFile) {
+      output.once('data', function (newFile) {
         var json = JSON.parse(String(newFile.contents))
         json.key1.should.equal('newValue')
         json.subkey.key1.should.equal('value2')
@@ -39,10 +39,10 @@ describe('JSON Modify', function() {
       output.write(fakeFile)
     })
 
-    it('should replace complex key', function(done) {
+    it('should replace complex key', function (done) {
       var output = jsonModify({ key: 'subkey.key1', value: 'newValue' })
 
-      output.once('data', function(newFile) {
+      output.once('data', function (newFile) {
         var json = JSON.parse(String(newFile.contents))
         json.key1.should.equal('value1')
         json.subkey.key1.should.equal('newValue')
@@ -51,10 +51,10 @@ describe('JSON Modify', function() {
       output.write(fakeFile)
     })
 
-    it('should work with a falsey value', function(done) {
+    it('should work with a falsey value', function (done) {
       var output = jsonModify({ key: 'subkey.key1', value: false })
 
-      output.once('data', function(newFile) {
+      output.once('data', function (newFile) {
         var json = JSON.parse(String(newFile.contents))
         json.key1.should.equal('value1')
         json.subkey.key1.should.equal(false)
@@ -63,35 +63,50 @@ describe('JSON Modify', function() {
       output.write(fakeFile)
     })
 
+    it('should work with no "value" value provided', function (done) {
+
+      fakeFile.contents = new Buffer(JSON.stringify(dotObject, null, 2))
+
+      var output = jsonModify({ key: 'subkey' })
+
+      output.once('data', function (newFile) {
+        var json = JSON.parse(String(newFile.contents))
+        should.not.exist(json['subkey'])
+        done()
+      })
+
+      output.write(fakeFile)
+      output.end()
+    })
+
+    it('should work with no "value" value provided && complex key', function (done) {
+
+      fakeFile.contents = new Buffer(JSON.stringify(dotObject, null, 2))
+
+      var output = jsonModify({ key: 'key1.subkey' })
+
+      output.once('data', function (newFile) {
+        var json = JSON.parse(String(newFile.contents))
+        should.not.exist(json.key1['subkey'])
+        done()
+      })
+
+      output.write(fakeFile)
+      output.end()
+    })
   })
 
-  describe('Errors', function() {
+  describe('Errors', function () {
 
-    it('should fail when no "key" value provided', function(done) {
+    it('should fail when no "key" value provided', function (done) {
 
       fakeFile.contents = new Buffer(JSON.stringify(dotObject, null, 2))
 
       var output = jsonModify()
 
-      output.on('error', function(e) {
+      output.on('error', function (e) {
         should.exist(e)
         e.message.should.equal('Missing "key" option')
-        e.fileName.should.containEql(fakeFile.path)
-        return done()
-      });
-      output.write(fakeFile)
-      output.end()
-    })
-
-    it('should fail when no "value" value provided', function(done) {
-
-      fakeFile.contents = new Buffer(JSON.stringify(dotObject, null, 2))
-
-      var output = jsonModify({ key: 'test' })
-
-      output.on('error', function(e) {
-        should.exist(e)
-        e.message.should.equal('Missing "value" option')
         e.fileName.should.containEql(fakeFile.path)
         return done()
       });

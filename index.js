@@ -6,11 +6,11 @@ var path = require('path')
   , through = require('through2')
   , Dot = require('dot-object')
 
-module.exports = function(opts) {
+module.exports = function (opts) {
   // set task options
   opts = setDefaultOptions(opts)
 
-  return through.obj(function(file, enc, cb) {
+  return through.obj(function (file, enc, cb) {
 
     if (file.isNull()) {
       return cb(null, file)
@@ -26,13 +26,13 @@ module.exports = function(opts) {
         { fileName: file.path, showStack: true }
       ))
     }
-    if (typeof opts.value === 'undefined') {
-      return cb(new pluginError(
-        'gulp-json-modify',
-        'Missing "value" option',
-        { fileName: file.path, showStack: true }
-      ))
-    }
+    // if (typeof opts.value === 'undefined') {
+    //   return cb(new pluginError(
+    //     'gulp-json-modify',
+    //     'Missing "value" option',
+    //     { fileName: file.path, showStack: true }
+    //   ))
+    // }
 
     var content = String(file.contents)
     var json
@@ -52,9 +52,18 @@ module.exports = function(opts) {
     }
 
     if (dot) {
-      dot.str(opts.key, opts.value, json)
+      if (opts.value === undefined) {
+        // delete key
+        dot.del(opts.key, json)
+      } else {
+        dot.str(opts.key, opts.value, json)
+      }
     } else {
-      json[opts.key] = opts.value
+      if (opts.value === undefined) {
+        delete json[opts.key];
+      } else {
+        json[opts.key] = opts.value
+      }
     }
 
     file.contents = new Buffer(
@@ -65,9 +74,7 @@ module.exports = function(opts) {
       ) + possibleNewline(content)
     )
 
-    log('Updated \'' + log.colors.cyan(path.basename(file.path)) +
-      '\' ' + log.colors.magenta(opts.key) +
-      ' to: ' + log.colors.cyan(opts.value))
+    log(`Updated '${log.colors.cyan(path.basename(file.path))}' ${log.colors.magenta(opts.key)}${opts.value !== undefined && ' to: ' + log.colors.cyan(opts.value)}`);
 
     cb(null, file)
   })
